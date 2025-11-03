@@ -226,4 +226,4 @@ Thực hiện:
 ```
 
 ✅ Nếu bạn thấy dòng `[100%] Built target YourAppName`,  
-thì file `.exe` đã được build thành công nằm trong thư mục `build\`.
+thì file `.exe` đã được build thành công nằm trong thư mục `build\`, và chương trình đã được khởi chạy.
