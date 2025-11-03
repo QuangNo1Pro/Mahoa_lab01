@@ -123,7 +123,7 @@ Script sẽ tự:
 3. `cmake --build build` để biên dịch
 4. Chạy file `.exe` vừa build xong
 
-## 7) Lỗi thường gặp
+## 7 Lỗi thường gặp
 
 | Vấn đề                                  | Nguyên nhân                         | Cách khắc phục                               |
 | --------------------------------------- | ----------------------------------- | -------------------------------------------- |
@@ -133,3 +133,97 @@ Script sẽ tự:
 | Không thấy `.exe`                       | Mới `cmake`, chưa build             | Dùng `cmake --build build` hoặc `./build.sh` |
 
 ---
+
+# 💻 Hướng dẫn cài trực tiếp g++ và CMake trên Windows (tuỳ chọn)
+
+Nếu bạn **không muốn dùng MSYS2**, bạn có thể **cài trực tiếp compiler và CMake** vào Windows theo hướng dẫn sau.  
+Cách này giúp bạn build và chạy project bằng **cmd / PowerShell / VSCode terminal** mà không cần môi trường Linux.
+
+---
+
+## 🧩 1️⃣ Cài MinGW-w64 (g++)
+
+1. Vào trang chính thức **WinLibs**:  
+   👉 [https://winlibs.com/](https://winlibs.com/)
+
+2. Cuộn xuống phần **“Latest release”**, tìm mục:
+
+   ```
+   MinGW-w64 GCC x86_64 (SEH, UCRT)
+   ```
+
+   → Tải file `.zip` (ví dụ:  
+   `mingw-w64-gcc-14.2.0-llvm-mingw64-ucrt.zip`)
+
+3. Giải nén ra một thư mục, ví dụ:
+
+   ```
+   C:\mingw64
+   ```
+
+4. **Thêm vào PATH:**
+
+   - Mở **Start Menu** → gõ `environment`
+   - Chọn **Edit the system environment variables**
+   - Vào tab **Advanced → Environment Variables**
+   - Trong mục **System variables**, chọn dòng **Path → Edit → New**
+   - Dán:
+     ```
+     C:\mingw64\bin
+     ```
+   - Nhấn OK để lưu.
+
+5. Kiểm tra:
+   ```bash
+   g++ --version
+   ```
+   ✅ Nếu hiển thị phiên bản (ví dụ `g++ 14.2.0`), là đã cài thành công.
+
+---
+
+## ⚙️ 2️⃣ Cài CMake
+
+1. Vào trang chính thức:  
+   👉 [https://cmake.org/download/](https://cmake.org/download/)
+
+2. Tải file:
+
+   ```
+   Windows x64 Installer (.msi)
+   ```
+
+3. Khi cài đặt, nhớ **tick vào tuỳ chọn**:
+
+   ```
+   Add CMake to the system PATH for all users
+   ```
+
+4. Kiểm tra:
+   ```bash
+   cmake --version
+   ```
+   ✅ Nếu hiện phiên bản là bạn đã sẵn sàng.
+
+---
+
+## 🧱 3️⃣ Build project bằng cmd hoặc PowerShell
+
+Giả sử bạn có project:
+
+```
+E:\CPP\Mahoa_lab01\
+├── CMakeLists.txt
+├── build.sh
+├── src\
+│   └── main.cpp
+└── include\
+```
+
+Thực hiện:
+
+```sh
+./build.sh
+```
+
+✅ Nếu bạn thấy dòng `[100%] Built target YourAppName`,  
+thì file `.exe` đã được build thành công nằm trong thư mục `build\`.
