@@ -12,7 +12,7 @@ if command -v g++ >/dev/null 2>&1; then
   echo "🛠 Detected g++ — using generator: $GENERATOR"
 else
   GENERATOR=""
-  echo "⚙️  No g++ found — using default generator (Visual Studio/MSBuild)"
+  echo "No g++ found — using default generator (Visual Studio/MSBuild)"
 fi
 
 # Create build directory if missing
@@ -40,8 +40,8 @@ if [ $? -eq 0 ]; then
   elif [ -f "./build/Debug/$APP_NAME.exe" ]; then
     ./build/Debug/$APP_NAME.exe
   else
-    echo "⚠️  Cannot find $APP_NAME.exe (check build output folder)"
+    echo " Cannot find $APP_NAME.exe (check build output folder)"
   fi
 else
-  echo "❌ Build failed!"
+  echo "Build failed!"
 fi
