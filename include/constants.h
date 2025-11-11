@@ -84,8 +84,8 @@ class BigInt {
     // Tạo một đối tượng tạm thời để tính toán
     BigInt result;
     if (decimal_str.empty()) {
-        m_chunks.push_back(0);
-        return;
+      m_chunks.push_back(0);
+      return;
     }
 
     BigInt ten(10);
@@ -339,7 +339,7 @@ class BigInt {
 
   // Hàm bạn bè để cho phép 'cout << myBigInt'
   friend std::ostream& operator<<(std::ostream& os, const BigInt& num) {
-    os << num.toHexString();
+    os << num.toDecimalString();
     return os;
   }
 
