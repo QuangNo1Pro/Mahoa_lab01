@@ -4,6 +4,7 @@
 
 #include "constants.h"
 #include "modular_exponentiation.h"
+#include "prime_utils.h"
 
 // void test_bigint() {
 //   cout << "--- Bat dau kiem tra BigInt ---" << endl << endl;
@@ -99,6 +100,27 @@ int main() {
   std::cout << "--- Bat dau kiem tra modular_exponentiation ---" << std::endl
             << std::endl;
   std::cout << "Result: " << modular_exponentiation(3, 13, 17) << std::endl;
+  std::cout << "\n-------------------------------------------------------"
+            << std::endl;
+
+  std::cout << "--- Bat dau kiem tra  generate_safe_prime ---"
+            << std::endl;
+
+  try {
+    int bit_size = 32; 
+    BigInt safe_prime = generate_safe_prime(bit_size);
+
+    std::cout << "\n[KET QUA  generate_safe_prime]" << std::endl;
+    std::cout << "So nguyen to an toan P (" << bit_size
+              << " bit) da tim thay:" << std::endl;
+
+    std::cout << "P (Hex): " << safe_prime.toHexString() << std::endl;
+    std::cout << "P (Dec): " << safe_prime.toDecimalString() << std::endl;
+
+  } catch (const std::exception& e) {
+    std::cerr << "Da xay ra loi khi sinh so nguyen to: " << e.what()
+              << std::endl;
+  }
 
   std::cout << "\nNhan Enter de tiep tuc...";
   std::cin.get();

@@ -1,4 +1,4 @@
-#!/bin/bash
+g++ --version#!/bin/bash
 
 # ============================
 # 🧩 Script build CMake project (cross-compiler safe)
