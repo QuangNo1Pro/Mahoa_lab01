@@ -1,4 +1,3 @@
-#include <cstdint>
 #include <iostream>
 #include <stdexcept>
 
@@ -7,160 +6,91 @@
 #include "modular_exponentiation.h"
 #include "prime_utils.h"
 
-// void test_bigint() {
-//   cout << "--- Bat dau kiem tra BigInt ---" << endl << endl;
+// ===Giao thuc Diffie-Hellman ===
+void run_diffie_hellman() {
+  // --- Buoc 1: Thong nhat tham so cong khai (p va g) ---
+  const int bit_size = 512;
+  std::cout << "--- Giao thuc trao doi khoa Diffie-Hellman (" << bit_size
+            << " bit) ---" << std::endl;
+  std::cout << "\n1. Thong nhat tham so cong khai:" << std::endl;
 
-//   // Test 1: Khoi tao
-//   cout << "1. Kiem tra khoi tao:" << endl;
-//   BigInt a("12345678901234567890");
-//   BigInt b("DEADBEEF", BigInt::HexTag{});
-//   cout << "   a (dec): " << a.toDecimalString() << endl;
-//   cout << "   a (hex): " << a.toHexString() << endl;
-//   cout << "   Mong doi a (hex): ab54a98ceb1f0ad2"
-//        << endl;  // Corrected expected value
-//   cout << "   b (hex): " << b.toHexString() << endl;
-//   cout << "   b (dec): " << b.toDecimalString() << endl;
-//   cout << "   Mong doi b (dec): 3735928559" << endl << endl;
+  // Sinh so nguyen to an toan p.
+  // So nguyen to an toan la so co dang p = 2q + 1, voi q cung la so nguyen to.
+  std::cout << "   - Dang sinh so nguyen to an toan p..." << std::endl;
+  BigInt p = generate_safe_prime(bit_size);
+  std::cout << "     -> p (hex) = " << p.toHexString() << std::endl;
 
-//   // Test 2: Phep cong
-//   cout << "2. Kiem tra phep cong:" << endl;
-//   BigInt c("87654321098765432110");
-//   BigInt sum = a + c;
-//   cout << "   " << a.toDecimalString() << " + " << c.toDecimalString() << " =
-//   "
-//        << sum.toDecimalString() << endl;
-//   cout << "   Mong doi: 100000000000000000000" << endl << endl;
+  // Chon mot phan tu sinh g cua nhom Z_p*.
+  // Voi p la so nguyen to an toan, viec chon g=2 hoac g=5 thuong la an toan va hieu qua.
+  BigInt g(5);
+  std::cout << "   - Chon phan tu sinh g = " << g << std::endl;
 
-//   // Test 3: Phep tru
-//   cout << "3. Kiem tra phep tru:" << endl;
-//   BigInt d("10000");
-//   BigInt e("3456");
-//   BigInt diff = d - e;
-//   cout << "   10000 - 3456 = " << diff.toDecimalString() << endl;
-//   cout << "   Mong doi: 6544" << endl << endl;
+  // --- Buoc 2: Alice sinh khoa rieng va khoa cong khai ---
+  std::cout << "\n2. Alice thuc hien:" << std::endl;
+  // Sinh khoa rieng 'a' mot cach ngau nhien trong khoang [2, p-2].
+  BigInt alice_private_key = generate_private_key(p);
+  std::cout << "   - Khoa bi mat (a) (hex): "
+            << alice_private_key.toHexString() << std::endl;
 
-//   // Test 4: Phep nhan (don gian)
-//   cout << "4. Kiem tra phep nhan (don gian):" << endl;
-//   BigInt p1("4294967295");
-//   BigInt p2("4294967295");
-//   BigInt prod = p1 * p2;
-//   cout << "   4294967295 * 4294967295 = " << prod.toDecimalString() << endl;
-//   cout << "   Mong doi: 18446744065119617025" << endl;
-//   cout << "   Ket qua (hex): " << prod.toHexString() << endl;
-//   cout << "   Mong doi (hex): fffffffe00000001" << endl << endl;
+  // Tinh khoa cong khai A = g^a mod p.
+  BigInt alice_public_key = modular_exponentiation(g, alice_private_key, p);
+  std::cout << "   - Khoa cong khai (A = g^a mod p) (hex): "
+            << alice_public_key.toHexString() << std::endl;
 
-//   // Test 5: Phep chia va chia lay du (don gian)
-//   cout << "5. Kiem tra phep chia va chia lay du (don gian):" << endl;
-//   BigInt dividend("18446744065119617025");
-//   BigInt divisor("4294967295");
-//   BigInt quotient = dividend / divisor;
-//   BigInt remainder = dividend % divisor;
-//   cout << "   " << dividend.toDecimalString() << " / "
-//        << divisor.toDecimalString() << endl;
-//   cout << "   Thuong: " << quotient.toDecimalString()
-//        << " (Mong doi: 4294967295)" << endl;
-//   cout << "   Du: " << remainder.toDecimalString() << " (Mong doi: 0)" <<
-//   endl
-//        << endl;
+  // --- Buoc 3: Bob sinh khoa rieng va khoa cong khai ---
+  std::cout << "\n3. Bob thuc hien:" << std::endl;
+  // Sinh khoa rieng 'b' mot cach ngau nhien trong khoang [2, p-2].
+  BigInt bob_private_key = generate_private_key(p);
+  std::cout << "   - Khoa bi mat (b) (hex): " << bob_private_key.toHexString()
+            << std::endl;
 
-//   // Test 6: So sanh
-//   cout << "6. Kiem tra so sanh:" << endl;
-//   BigInt s1("100");
-//   BigInt s2("200");
-//   BigInt s3("100");
-//   cout << "   100 < 200: " << (s1 < s2 ? "Dung" : "Sai") << " (Mong doi:
-//   Dung)"
-//        << endl;
-//   cout << "   200 > 100: " << (s2 > s1 ? "Dung" : "Sai") << " (Mong doi:
-//   Dung)"
-//        << endl;
-//   cout << "   100 == 100: " << (s1 == s3 ? "Dung" : "Sai")
-//        << " (Mong doi: Dung)" << endl;
-//   cout << "   100 != 200: " << (s1 != s2 ? "Dung" : "Sai")
-//        << " (Mong doi: Dung)" << endl;
-//   cout << "   100 <= 100: " << (s1 <= s3 ? "Dung" : "Sai")
-//        << " (Mong doi: Dung)" << endl;
-//   cout << "   200 >= 100: " << (s2 >= s1 ? "Dung" : "Sai")
-//        << " (Mong doi: Dung)" << endl
-//        << endl;
+  // Tinh khoa cong khai B = g^b mod p.
+  BigInt bob_public_key = modular_exponentiation(g, bob_private_key, p);
+  std::cout << "   - Khoa cong khai (B = g^b mod p) (hex): "
+            << bob_public_key.toHexString() << std::endl;
 
-//   cout << "--- Ket thuc kiem tra BigInt ---" << endl;
-// }
+  // --- Buoc 4: Trao doi khoa cong khai va tinh toan bi mat chung ---
+  std::cout << "\n4. Trao doi khoa va tinh toan bi mat chung:" << std::endl;
+
+  // Alice nhan khoa cong khai B cua Bob va tinh khoa chung.
+  // S_A = B^a mod p = (g^b)^a mod p = g^(ba) mod p.
+  BigInt shared_secret_alice =
+      modular_exponentiation(bob_public_key, alice_private_key, p);
+  std::cout << "   - Alice tinh khoa chung (S_A = B^a mod p) (hex): "
+            << shared_secret_alice.toHexString() << std::endl;
+
+  // Bob nhan khoa cong khai A cua Alice va tinh khoa chung.
+  // S_B = A^b mod p = (g^a)^b mod p = g^(ab) mod p.
+  BigInt shared_secret_bob =
+      modular_exponentiation(alice_public_key, bob_private_key, p);
+  std::cout << "   - Bob tinh khoa chung (S_B = A^b mod p) (hex): "
+            << shared_secret_bob.toHexString() << std::endl;
+
+  // --- Buoc 5: Xac minh ---
+  // Kiem tra xem hai khoa chung co khop nhau hay khong.
+  std::cout << "\n5. Xac minh ket qua:" << std::endl;
+  if (shared_secret_alice == shared_secret_bob) {
+    std::cout << "   -> THANH CONG! Khoa bi mat chung cua Alice va Bob "
+                 "trung khop."
+              << std::endl;
+  } else {
+    std::cout << "   -> THAT BAI! Khoa bi mat chung khong khop."
+              << std::endl;
+  }
+
+  std::cout << "\n--- Ket thuc chuong trinh ---" << std::endl;
+}
 
 int main() {
-  //   try {
-  //     test_bigint();
-  //   } catch (const std::exception& e) {
-  //     cerr << "An exception occurred: " << e.what() << endl;
-  //     return 1;
-  //   } catch (...) {
-  //     cerr << "An unknown exception occurred." << endl;
-  //     return 1;
-  //   }
-
-  //   std::cout << "--- Bat dau kiem tra modular_exponentiation ---" <<
-  //   std::endl
-  //             << std::endl;
-  //   std::cout << "Result: " << modular_exponentiation(3, 13, 17) <<
-  //   std::endl; std::cout <<
-  //   "\n-------------------------------------------------------"
-  //             << std::endl;
-
-  //   std::cout << "--- Bat dau kiem tra  generate_safe_prime ---" <<
-  //   std::endl;
-
-  //   try {
-  //     int bit_size = 32;
-  //     BigInt safe_prime = generate_safe_prime(bit_size);
-
-  //     std::cout << "\n[KET QUA  generate_safe_prime]" << std::endl;
-  //     std::cout << "So nguyen to an toan P (" << bit_size
-  //               << " bit) da tim thay:" << std::endl;
-
-  //     std::cout << "P (Hex): " << safe_prime.toHexString() << std::endl;
-  //     std::cout << "P (Dec): " << safe_prime.toDecimalString() << std::endl;
-
-  //   } catch (const std::exception& e) {
-  //     std::cerr << "Da xay ra loi khi sinh so nguyen to: " << e.what()
-  //               << std::endl;
-  //   }
-
-  //   std::cout << "\nNhan Enter de tiep tuc...";
-  //   std::cin.get();
-  //   return 0;
   try {
-    // Với p lớn (512 bit) có thể chậm; để thử nhanh hãy đặt 64 hoặc 128.
-    int bit_size = 64;  // đổi thành 64 hoặc 128 để test nhanh
-    std::cout << "Sinh safe prime p (" << bit_size << " bit) ...\n";
-    BigInt p = generate_safe_prime(bit_size);
-    std::cout << "p (hex): " << p.toHexString() << "\n";
-    std::cout << "p (dec digits): " << p.toDecimalString().size() << "\n";
-
-    // Gọi hàm cần kiểm tra
-    BigInt priv = generate_private_key(p);
-
-    // Kiểm tra ràng buộc: 2 <= priv <= p-2
-    BigInt two(2);
-    BigInt p_minus_two = p - two;
-
-    bool ge2 = !(priv < two);           // priv >= 2
-    bool lep2 = !(p_minus_two < priv);  // priv <= p-2
-
-    std::cout << "\nPrivate key (hex): " << priv.toHexString() << "\n";
-    std::cout << "Private key (dec length): " << priv.toDecimalString().size()
-              << " digits\n";
-    std::cout << "Check priv >= 2 : " << (ge2 ? "OK" : "FAIL") << "\n";
-    std::cout << "Check priv <= p-2: " << (lep2 ? "OK" : "FAIL") << "\n";
-
-    if (ge2 && lep2) {
-      std::cout << "\ngenerate_private_key PASSED basic range checks.\n";
-    } else {
-      std::cerr << "\ngenerate_private_key FAILED range checks.\n";
-      return 2;
-    }
+    run_diffie_hellman();
   } catch (const std::exception& e) {
-    std::cerr << "Exception: " << e.what() << "\n";
+    std::cerr << "\n[LOI] Da xay ra mot ngoai le: " << e.what() << std::endl;
+    return 1;
+  } catch (...) {
+    std::cerr << "\n[LOI] Da xay ra mot loi khong xac dinh." << std::endl;
     return 1;
   }
+
   return 0;
 }
