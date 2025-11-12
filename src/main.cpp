@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "constants.h"
+#include "generate_private_key.h"
 #include "modular_exponentiation.h"
 #include "prime_utils.h"
 
@@ -97,32 +98,69 @@ int main() {
   //     return 1;
   //   }
 
-  std::cout << "--- Bat dau kiem tra modular_exponentiation ---" << std::endl
-            << std::endl;
-  std::cout << "Result: " << modular_exponentiation(3, 13, 17) << std::endl;
-  std::cout << "\n-------------------------------------------------------"
-            << std::endl;
+  //   std::cout << "--- Bat dau kiem tra modular_exponentiation ---" <<
+  //   std::endl
+  //             << std::endl;
+  //   std::cout << "Result: " << modular_exponentiation(3, 13, 17) <<
+  //   std::endl; std::cout <<
+  //   "\n-------------------------------------------------------"
+  //             << std::endl;
 
-  std::cout << "--- Bat dau kiem tra  generate_safe_prime ---"
-            << std::endl;
+  //   std::cout << "--- Bat dau kiem tra  generate_safe_prime ---" <<
+  //   std::endl;
 
+  //   try {
+  //     int bit_size = 32;
+  //     BigInt safe_prime = generate_safe_prime(bit_size);
+
+  //     std::cout << "\n[KET QUA  generate_safe_prime]" << std::endl;
+  //     std::cout << "So nguyen to an toan P (" << bit_size
+  //               << " bit) da tim thay:" << std::endl;
+
+  //     std::cout << "P (Hex): " << safe_prime.toHexString() << std::endl;
+  //     std::cout << "P (Dec): " << safe_prime.toDecimalString() << std::endl;
+
+  //   } catch (const std::exception& e) {
+  //     std::cerr << "Da xay ra loi khi sinh so nguyen to: " << e.what()
+  //               << std::endl;
+  //   }
+
+  //   std::cout << "\nNhan Enter de tiep tuc...";
+  //   std::cin.get();
+  //   return 0;
   try {
-    int bit_size = 32; 
-    BigInt safe_prime = generate_safe_prime(bit_size);
+    // Với p lớn (512 bit) có thể chậm; để thử nhanh hãy đặt 64 hoặc 128.
+    int bit_size = 64;  // đổi thành 64 hoặc 128 để test nhanh
+    std::cout << "Sinh safe prime p (" << bit_size << " bit) ...\n";
+    BigInt p = generate_safe_prime(bit_size);
+    std::cout << "p (hex): " << p.toHexString() << "\n";
+    std::cout << "p (dec digits): " << p.toDecimalString().size() << "\n";
 
-    std::cout << "\n[KET QUA  generate_safe_prime]" << std::endl;
-    std::cout << "So nguyen to an toan P (" << bit_size
-              << " bit) da tim thay:" << std::endl;
+    // Gọi hàm cần kiểm tra
+    BigInt priv = generate_private_key(p);
 
-    std::cout << "P (Hex): " << safe_prime.toHexString() << std::endl;
-    std::cout << "P (Dec): " << safe_prime.toDecimalString() << std::endl;
+    // Kiểm tra ràng buộc: 2 <= priv <= p-2
+    BigInt two(2);
+    BigInt p_minus_two = p - two;
 
+    bool ge2 = !(priv < two);           // priv >= 2
+    bool lep2 = !(p_minus_two < priv);  // priv <= p-2
+
+    std::cout << "\nPrivate key (hex): " << priv.toHexString() << "\n";
+    std::cout << "Private key (dec length): " << priv.toDecimalString().size()
+              << " digits\n";
+    std::cout << "Check priv >= 2 : " << (ge2 ? "OK" : "FAIL") << "\n";
+    std::cout << "Check priv <= p-2: " << (lep2 ? "OK" : "FAIL") << "\n";
+
+    if (ge2 && lep2) {
+      std::cout << "\ngenerate_private_key PASSED basic range checks.\n";
+    } else {
+      std::cerr << "\ngenerate_private_key FAILED range checks.\n";
+      return 2;
+    }
   } catch (const std::exception& e) {
-    std::cerr << "Da xay ra loi khi sinh so nguyen to: " << e.what()
-              << std::endl;
+    std::cerr << "Exception: " << e.what() << "\n";
+    return 1;
   }
-
-  std::cout << "\nNhan Enter de tiep tuc...";
-  std::cin.get();
   return 0;
 }
