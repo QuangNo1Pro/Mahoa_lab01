@@ -12,7 +12,7 @@
 #include <utility>  // Cần cho std::move
 #include <vector>
 
-const int BIT_SIZE = 512;
+const int BIT_SIZE = 64;
 const long long GENERATOR = 2;
 
 // Đảm bảo chỉ dùng C++14

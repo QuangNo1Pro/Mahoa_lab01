@@ -7,9 +7,8 @@
 #include "prime_utils.h"
 
 // ===Giao thuc Diffie-Hellman ===
-void run_diffie_hellman() {
+void run_diffie_hellman(int bit_size) {
   // --- Buoc 1: Thong nhat tham so cong khai (p va g) ---
-  const int bit_size = 512;
   std::cout << "--- Giao thuc trao doi khoa Diffie-Hellman (" << bit_size
             << " bit) ---" << std::endl;
   std::cout << "\n1. Thong nhat tham so cong khai:" << std::endl;
@@ -21,7 +20,8 @@ void run_diffie_hellman() {
   std::cout << "     -> p (hex) = " << p.toHexString() << std::endl;
 
   // Chon mot phan tu sinh g cua nhom Z_p*.
-  // Voi p la so nguyen to an toan, viec chon g=2 hoac g=5 thuong la an toan va hieu qua.
+  // Voi p la so nguyen to an toan, viec chon g=2 hoac g=5 thuong la an toan va
+  // hieu qua.
   BigInt g(5);
   std::cout << "   - Chon phan tu sinh g = " << g << std::endl;
 
@@ -29,8 +29,8 @@ void run_diffie_hellman() {
   std::cout << "\n2. Alice thuc hien:" << std::endl;
   // Sinh khoa rieng 'a' mot cach ngau nhien trong khoang [2, p-2].
   BigInt alice_private_key = generate_private_key(p);
-  std::cout << "   - Khoa bi mat (a) (hex): "
-            << alice_private_key.toHexString() << std::endl;
+  std::cout << "   - Khoa bi mat (a) (hex): " << alice_private_key.toHexString()
+            << std::endl;
 
   // Tinh khoa cong khai A = g^a mod p.
   BigInt alice_public_key = modular_exponentiation(g, alice_private_key, p);
@@ -74,23 +74,40 @@ void run_diffie_hellman() {
                  "trung khop."
               << std::endl;
   } else {
-    std::cout << "   -> THAT BAI! Khoa bi mat chung khong khop."
-              << std::endl;
+    std::cout << "   -> THAT BAI! Khoa bi mat chung khong khop." << std::endl;
   }
 
   std::cout << "\n--- Ket thuc chuong trinh ---" << std::endl;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
   try {
-    run_diffie_hellman();
+    int bit_size = BIT_SIZE;
+
+    std::cout << "Nhap so bit cho p (vd: 512, 1024, 2048): ";
+    std::cin >> bit_size;
+
+    if (!std::cin) {
+      throw std::invalid_argument(
+          "Bit size khong hop le (khong phai so nguyen).");
+    }
+    if (bit_size < 32) {
+      throw std::invalid_argument("Bit size qua nho, vui long chon >= 32.");
+    }
+
+    run_diffie_hellman(bit_size);
+
   } catch (const std::exception& e) {
     std::cerr << "\n[LOI] Da xay ra mot ngoai le: " << e.what() << std::endl;
+    std::cin.get();
     return 1;
   } catch (...) {
     std::cerr << "\n[LOI] Da xay ra mot loi khong xac dinh." << std::endl;
+    std::cin.get();
+
     return 1;
   }
+  std::cin.get();
 
   return 0;
 }
