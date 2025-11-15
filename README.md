@@ -46,7 +46,7 @@ Nếu không thấy thông báo, bạn có thể tự mở thủ công:
 
 ---
 
-# Hướng dẫn chạy project C++ bằng MSYS2 + CMake (Windows)
+# Hướng dẫn chạy project C++ bằng MSYS2 + CMake 
 
 ## 1 Cài MSYS2
 
@@ -146,14 +146,13 @@ Cách này giúp bạn build và chạy project bằng **cmd / PowerShell / VSCo
 1. Vào trang chính thức **WinLibs**:  
    👉 [https://winlibs.com/](https://winlibs.com/)
 
-2. Cuộn xuống phần **“Latest release”**, tìm mục:
-
+2. Cuộn xuống phần **“Release versions”**, tìm và tải phiên bản mới nhất:
+   Ví dụ: 
    ```
-   MinGW-w64 GCC x86_64 (SEH, UCRT)
+   GCC 15.2.0 (with POSIX threads) + MinGW-w64 13.0.0 (UCRT) - release 3
    ```
 
-   → Tải file `.zip` (ví dụ:  
-   `mingw-w64-gcc-14.2.0-llvm-mingw64-ucrt.zip`)
+   → Tải file `.zip` 
 
 3. Giải nén ra một thư mục, ví dụ:
 
